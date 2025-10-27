@@ -22,6 +22,18 @@ func main() {
 
 	fmt.Println("Connection is sucessfully established")
 
+	ch, err := conn.Channel()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	err = ch.Confirm(false)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, os.Interrupt)
 	<-signalChan
