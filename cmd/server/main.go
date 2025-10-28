@@ -2,9 +2,12 @@ package main
 
 import (
 	"fmt"
-	amqp "github.com/rabbitmq/amqp091-go"
 	"os"
 	"os/signal"
+
+	"github.com/bootdotdev/learn-pub-sub-starter/internal/pubsub"
+	"github.com/bootdotdev/learn-pub-sub-starter/internal/routing"
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 func main() {
@@ -33,6 +36,10 @@ func main() {
 		fmt.Println(err)
 		return
 	}
+
+	play_state := routing.PlayingState{IsPaused: true}
+
+	err = pubsub.PublishJSON(ch, routing.ExchangePerilDirect, routing.PauseKey, play_state)
 
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, os.Interrupt)
