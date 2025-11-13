@@ -9,8 +9,8 @@ import (
 type SimpleQueueType int
 
 const (
-	durable = iota
-	transient
+	Durable = iota
+	Transient
 )
 
 func DeclareAndBind(
@@ -28,24 +28,28 @@ func DeclareAndBind(
 	}
 
 	switch queueType {
-	case durable:
+	case Durable:
 		queue, err := ch.QueueDeclare(queueName, true, false, false, false, nil)
 		if err != nil {
+			fmt.Println(err)
 			return nil, amqp.Queue{}, err
 		}
 		err = ch.QueueBind(queueName, key, exchange, false, nil)
 		if err != nil {
+			fmt.Println(err)
 			return nil, amqp.Queue{}, err
 		}
 
 		return ch, queue, nil
-	case transient:
+	case Transient:
 		queue, err := ch.QueueDeclare(queueName, false, true, true, false, nil)
 		if err != nil {
+			fmt.Println(err)
 			return nil, amqp.Queue{}, err
 		}
 		err = ch.QueueBind(queueName, key, exchange, false, nil)
 		if err != nil {
+			fmt.Println(err)
 			return nil, amqp.Queue{}, err
 		}
 
