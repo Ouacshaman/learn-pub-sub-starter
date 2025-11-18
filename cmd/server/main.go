@@ -2,9 +2,8 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"os/signal"
 
+	"github.com/bootdotdev/learn-pub-sub-starter/internal/gamelogic"
 	"github.com/bootdotdev/learn-pub-sub-starter/internal/pubsub"
 	"github.com/bootdotdev/learn-pub-sub-starter/internal/routing"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -25,6 +24,8 @@ func main() {
 
 	fmt.Println("Connection is sucessfully established")
 
+	gamelogic.PrintServerHelp()
+
 	ch, err := conn.Channel()
 	if err != nil {
 		fmt.Println(err)
@@ -37,13 +38,37 @@ func main() {
 		return
 	}
 
-	play_state := routing.PlayingState{IsPaused: true}
+	for true {
+		input := gamelogic.GetInput()
+		if len(input) == 0 {
+			continue
+		}
+		switch input[0] {
+		case "pause":
+			fmt.Println("Publishing paused game state")
+			play_state := routing.PlayingState{IsPaused: true}
+			err = pubsub.PublishJSON(ch, routing.ExchangePerilDirect, routing.PauseKey, play_state)
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
 
-	err = pubsub.PublishJSON(ch, routing.ExchangePerilDirect, routing.PauseKey, play_state)
+		case "resume":
+			fmt.Println("Publishing resume game state")
+			play_state := routing.PlayingState{IsPaused: false}
+			err = pubsub.PublishJSON(ch, routing.ExchangePerilDirect, routing.PauseKey, play_state)
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
 
-	signalChan := make(chan os.Signal, 1)
-	signal.Notify(signalChan, os.Interrupt)
-	<-signalChan
+		case "quit":
+			fmt.Println("Logging Out")
+			return
 
-	fmt.Println("Connection Closing")
+		default:
+			fmt.Println("I don't understand your entry")
+		}
+	}
+
 }
