@@ -38,7 +38,23 @@ func main() {
 		return
 	}
 
-	//next lesson start here
+	gamestate := gamelogic.NewGameState(username)
+	fmt.Println(gamestate)
+
+	for true {
+		input := gamelogic.GetInput()
+		if len(input) == 0 {
+			continue
+		}
+		switch input[0] {
+		case "quit":
+			fmt.Println("Logging Out")
+			return
+
+		default:
+			fmt.Println("I don't understand your entry")
+		}
+	}
 
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, os.Interrupt)
