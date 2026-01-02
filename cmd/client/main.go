@@ -48,7 +48,7 @@ func main() {
 		}
 		switch input[0] {
 		case "quit":
-			fmt.Println("Logging Out")
+			gamelogic.PrintQuit()
 			return
 
 		default:
