@@ -39,7 +39,6 @@ func main() {
 	}
 
 	gamestate := gamelogic.NewGameState(username)
-	fmt.Println(gamestate)
 
 	for true {
 		input := gamelogic.GetInput()
