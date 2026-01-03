@@ -47,12 +47,31 @@ func main() {
 			continue
 		}
 		switch input[0] {
+		case "spawn":
+			err := gamestate.CommandSpawn(input)
+			if err != nil{
+				fmt.Println(err)
+				continue
+			}
+		case "move":
+			armymove, err := gamestate.CommandMove(input)
+			if err != nil{
+				fmt.Println(err)
+				continue
+			}
+		case "status":
+			gamestate.CommandStatus
+		case "help":
+			gamelogic.PrintClientHelp
+		case "spam":
+			fmt.Println("Spamming not allowed yet!")
 		case "quit":
 			gamelogic.PrintQuit()
 			return
 
 		default:
-			fmt.Println("I don't understand your entry")
+			fmt.Println("Invalid Command and I don't understand your entry")
+			continue
 		}
 	}
 
