@@ -54,15 +54,15 @@ func main() {
 				continue
 			}
 		case "move":
-			armymove, err := gamestate.CommandMove(input)
+			_, err := gamestate.CommandMove(input)
 			if err != nil{
 				fmt.Println(err)
 				continue
 			}
 		case "status":
-			gamestate.CommandStatus
+			gamestate.CommandStatus()
 		case "help":
-			gamelogic.PrintClientHelp
+			gamelogic.PrintClientHelp()
 		case "spam":
 			fmt.Println("Spamming not allowed yet!")
 		case "quit":
