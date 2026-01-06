@@ -38,6 +38,12 @@ func main() {
 		return
 	}
 
+	_, _, err = pubsub.DeclareAndBind(conn, routing.ExchangePerilTopic, routing.GameLogSlug, "game_logs.*", pubsub.Durable)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
 	for true {
 		input := gamelogic.GetInput()
 		if len(input) == 0 {
