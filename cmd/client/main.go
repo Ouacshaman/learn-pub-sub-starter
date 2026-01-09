@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"os/signal"
 
 	"github.com/bootdotdev/learn-pub-sub-starter/internal/gamelogic"
 	"github.com/bootdotdev/learn-pub-sub-starter/internal/pubsub"
@@ -32,15 +30,9 @@ func main() {
 
 	n_username := "pause." + username
 
-	_, _, err = pubsub.DeclareAndBind(conn, routing.ExchangePerilDirect, n_username, routing.PauseKey, pubsub.Transient)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
 	gamestate := gamelogic.NewGameState(username)
 
-	err = pubsub.SubscribeJSON(conn, routing.ExchangePerilDirect, n_username, routing.PauseKey, pubsub.Transient, HandlerPause(gamestate))
+	err = pubsub.SubscribeJSON(conn, routing.ExchangePerilDirect, n_username, routing.PauseKey, pubsub.Transient, handlerPause(gamestate))
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -79,11 +71,4 @@ func main() {
 			continue
 		}
 	}
-
-	signalChan := make(chan os.Signal, 1)
-	signal.Notify(signalChan, os.Interrupt)
-	<-signalChan
-
-	fmt.Println("Connection Closing")
-
 }
