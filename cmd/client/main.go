@@ -40,6 +40,12 @@ func main() {
 
 	gamestate := gamelogic.NewGameState(username)
 
+	err = pubsub.SubscribeJSON(conn, routing.ExchangePerilDirect, n_username, routing.PauseKey, pubsub.Transient, handlerPause(gamestate))
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
 	for true {
 		input := gamelogic.GetInput()
 		if len(input) == 0 {
@@ -48,13 +54,13 @@ func main() {
 		switch input[0] {
 		case "spawn":
 			err := gamestate.CommandSpawn(input)
-			if err != nil{
+			if err != nil {
 				fmt.Println(err)
 				continue
 			}
 		case "move":
 			_, err := gamestate.CommandMove(input)
-			if err != nil{
+			if err != nil {
 				fmt.Println(err)
 				continue
 			}
