@@ -40,7 +40,7 @@ func main() {
 
 	gamestate := gamelogic.NewGameState(username)
 
-	err = pubsub.SubscribeJSON(conn, routing.ExchangePerilDirect, n_username, routing.PauseKey, pubsub.Transient, handlerPause(gamestate))
+	err = pubsub.SubscribeJSON(conn, routing.ExchangePerilDirect, n_username, routing.PauseKey, pubsub.Transient, HandlerPause(gamestate))
 	if err != nil {
 		fmt.Println(err)
 		return
