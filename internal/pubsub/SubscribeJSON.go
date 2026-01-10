@@ -31,18 +31,10 @@ func SubscribeJSON[T any](
 				fmt.Println(err)
 				continue
 			}
-			err = PublishJSON(ch, exchange, key, gen_body)
-			if err != nil {
-				fmt.Println(err)
-				continue
-			}
+			handler(gen_body)
 			v.Ack(false)
 		}
 	}()
-
-	if err != nil {
-		return err
-	}
 
 	return nil
 }
