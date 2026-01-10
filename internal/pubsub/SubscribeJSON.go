@@ -19,7 +19,7 @@ func SubscribeJSON[T any](
 		return err
 	}
 
-	delivery_ch, err := ch.Consume("", "", false, false, false, false, nil)
+	delivery_ch, err := ch.Consume(queueName, "", false, false, false, false, nil)
 	if err != nil {
 		return err
 	}
