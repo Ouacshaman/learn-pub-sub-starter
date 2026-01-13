@@ -28,11 +28,19 @@ func main() {
 		return
 	}
 
-	n_username := "pause." + username
+	pause_username := routing.PauseKey + username
 
 	gamestate := gamelogic.NewGameState(username)
 
-	err = pubsub.SubscribeJSON(conn, routing.ExchangePerilDirect, n_username, routing.PauseKey, pubsub.Transient, handlerPause(gamestate))
+	err = pubsub.SubscribeJSON(conn, routing.ExchangePerilDirect, pause_username, routing.PauseKey, pubsub.Transient, handlerPause(gamestate))
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	army_move_username := routing.ArmyMovesPrefix + "." + username
+
+	err = pubsub.SubscribeJSON(conn, routing.ExchangePerilTopic, army_move_username, "army_moves.*", pubsub.Transient, handlerArmyMove(gamestate))
 	if err != nil {
 		fmt.Println(err)
 		return
