@@ -20,6 +20,12 @@ func main() {
 		return
 	}
 
+	channel, err := conn.Channel()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
 	defer conn.Close()
 
 	username, err := gamelogic.ClientWelcome()
@@ -59,11 +65,17 @@ func main() {
 				continue
 			}
 		case "move":
-			_, err := gamestate.CommandMove(input)
+			gl, err := gamestate.CommandMove(input)
 			if err != nil {
 				fmt.Println(err)
 				continue
 			}
+			err = pubsub.PublishJSON(channel, routing.ExchangePerilTopic, army_move_username, gl)
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
+			fmt.Println("Move Published Successfully")
 		case "status":
 			gamestate.CommandStatus()
 		case "help":
