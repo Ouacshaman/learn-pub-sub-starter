@@ -29,7 +29,7 @@ func DeclareAndBind(
 
 	switch queueType {
 	case Durable:
-		queue, err := ch.QueueDeclare(queueName, true, false, false, false, nil)
+		queue, err := ch.QueueDeclare(queueName, true, false, false, false, amqp.Table{amqp.QueueTypeArg: "peril_dlx"})
 		if err != nil {
 			fmt.Println(err)
 			return nil, amqp.Queue{}, err
@@ -42,7 +42,7 @@ func DeclareAndBind(
 
 		return ch, queue, nil
 	case Transient:
-		queue, err := ch.QueueDeclare(queueName, false, true, true, false, nil)
+		queue, err := ch.QueueDeclare(queueName, false, true, true, false, amqp.Table{amqp.QueueTypeArg: "peril_dlx"})
 		if err != nil {
 			fmt.Println(err)
 			return nil, amqp.Queue{}, err
