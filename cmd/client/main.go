@@ -46,7 +46,7 @@ func main() {
 
 	army_move_username := routing.ArmyMovesPrefix + "." + username
 
-	err = pubsub.SubscribeJSON(conn, routing.ExchangePerilTopic, army_move_username, "army_moves.*", pubsub.Transient, handlerArmyMove(gamestate))
+	err = pubsub.SubscribeJSON(conn, routing.ExchangePerilTopic, army_move_username, "army_moves.*", pubsub.Transient, handlerArmyMove(channel, gamestate))
 	if err != nil {
 		fmt.Println(err)
 		return
