@@ -1,0 +1,53 @@
+package pubsub
+
+import (
+	"fmt"
+	amqp "github.com/rabbitmq/amqp091-go"
+)
+
+func Subscribe[T any](
+	conn *amqp.Connection,
+	exchange,
+	queueName,
+	key string,
+	simpleQueueType SimpleQueueType,
+	handler func(T) Acktype,
+	unmarshaller func([]byte) (T, error),
+) error {
+	ch, _, err := DeclareAndBind(conn, exchange, queueName, key, simpleQueueType)
+	if err != nil {
+		return err
+	}
+
+	delivery_ch, err := ch.Consume(queueName, "", false, false, false, false, nil)
+	if err != nil {
+		return err
+	}
+
+	go func() {
+		for v := range delivery_ch {
+			out, err := unmarshaller(v.Body)
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
+			ack_out := handler(out)
+
+			switch ack_out {
+			case Ack:
+				v.Ack(false)
+				fmt.Println("Ack")
+			case NackRequeue:
+				v.Nack(false, true)
+				fmt.Println("NackRequeue")
+			case NackDiscard:
+				v.Nack(false, false)
+				fmt.Println("NackDiscard")
+			default:
+				continue
+			}
+		}
+	}()
+
+	return nil
+}
