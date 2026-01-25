@@ -44,7 +44,11 @@ func main() {
 		return
 	}
 
-	err := pubsub.SubscribeGob(conn, routing.ExchangePerilTopic, routing.GameLogSlug, routing.GameLogSlug+".*", pubsub.Durable)
+	err = pubsub.SubscribeGob(conn, routing.ExchangePerilTopic, routing.GameLogSlug, routing.GameLogSlug+".*", pubsub.Durable, handlerLog())
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
 	for true {
 		input := gamelogic.GetInput()
