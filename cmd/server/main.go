@@ -24,21 +24,7 @@ func main() {
 
 	fmt.Println("Connection is sucessfully established")
 
-	gamelogic.PrintServerHelp()
-
 	ch, err := conn.Channel()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	err = ch.Confirm(false)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	_, _, err = pubsub.DeclareAndBind(conn, routing.ExchangePerilTopic, routing.GameLogSlug, "game_logs.*", pubsub.Durable)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -49,6 +35,8 @@ func main() {
 		fmt.Println(err)
 		return
 	}
+
+	gamelogic.PrintServerHelp()
 
 	for true {
 		input := gamelogic.GetInput()

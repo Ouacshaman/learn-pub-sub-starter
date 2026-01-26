@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/bootdotdev/learn-pub-sub-starter/internal/gamelogic"
 	"github.com/bootdotdev/learn-pub-sub-starter/internal/pubsub"
@@ -99,7 +100,7 @@ func main() {
 			}
 			for i := 0; i < n; i++ {
 				malice := gamelogic.GetMaliciousLog()
-				err := pubsub.PublishJSON(channel, routing.ExchangePerilTopic, routing.GameLogSlug+"."+username, malice)
+				err := publishGameLog(channel, malice, username)
 				if err != nil {
 					fmt.Println(err)
 					continue
@@ -114,4 +115,17 @@ func main() {
 			continue
 		}
 	}
+}
+
+func publishGameLog(ch *amqp.Channel, message, username string) error {
+	gs := routing.GameLog{
+		CurrentTime: time.Now(),
+		Message:     message,
+		Username:    username,
+	}
+
+	return pubsub.PublishGob(ch,
+		routing.ExchangePerilTopic,
+		routing.GameLogSlug+"."+username,
+		gs)
 }
