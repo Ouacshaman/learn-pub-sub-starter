@@ -97,7 +97,7 @@ func main() {
 				fmt.Println(err)
 				continue
 			}
-			for i := 0; i <= n; i++ {
+			for i := 0; i < n; i++ {
 				malice := gamelogic.GetMaliciousLog()
 				err := pubsub.PublishJSON(channel, routing.ExchangePerilTopic, routing.GameLogSlug+"."+username, malice)
 				if err != nil {

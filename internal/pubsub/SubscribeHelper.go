@@ -14,12 +14,17 @@ func Subscribe[T any](
 	handler func(T) Acktype,
 	unmarshaller func([]byte) (T, error),
 ) error {
-	ch, _, err := DeclareAndBind(conn, exchange, queueName, key, simpleQueueType)
+	ch, queue, err := DeclareAndBind(conn, exchange, queueName, key, simpleQueueType)
 	if err != nil {
 		return err
 	}
 
-	delivery_ch, err := ch.Consume(queueName, "", false, false, false, false, nil)
+	err = ch.Qos(10, 0, false)
+	if err != nil {
+		return err
+	}
+
+	delivery_ch, err := ch.Consume(queue.Name, "", false, false, false, false, nil)
 	if err != nil {
 		return err
 	}

@@ -13,8 +13,10 @@ func handlerLog() func(gamelog routing.GameLog) pubsub.Acktype {
 		defer fmt.Println("> ")
 		err := gamelogic.WriteLog(gamelog)
 		if err != nil {
+			fmt.Println("WriteLog error:", err)
 			return pubsub.NackRequeue
 		}
+		fmt.Println("WriteLog OK")
 		return pubsub.Ack
 	}
 }
